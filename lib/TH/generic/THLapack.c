@@ -25,7 +25,7 @@ TH_EXTERNC void dpotrs_(char *uplo, int *n, int *nrhs, double *a, int *lda, doub
 TH_EXTERNC void spotrs_(char *uplo, int *n, int *nrhs, float *a, int *lda, float *b, int *ldb, int *info);
 
 
-void THLapack_(gesv)(int n, int nrhs, real *a, int lda, int *ipiv, real *b, int ldb, int* info)
+void THLapack_(gesv)(int n, int nrhs, buffer a, int lda, int *ipiv, buffer b, int ldb, int* info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -39,7 +39,7 @@ void THLapack_(gesv)(int n, int nrhs, real *a, int lda, int *ipiv, real *b, int 
   return;
 }
 
-void THLapack_(gels)(char trans, int m, int n, int nrhs, real *a, int lda, real *b, int ldb, real *work, int lwork, int *info)
+void THLapack_(gels)(char trans, int m, int n, int nrhs, buffer a, int lda, buffer b, int ldb, buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -52,7 +52,7 @@ void THLapack_(gels)(char trans, int m, int n, int nrhs, real *a, int lda, real 
 #endif
 }
 
-void THLapack_(syev)(char jobz, char uplo, int n, real *a, int lda, real *w, real *work, int lwork, int *info)
+void THLapack_(syev)(char jobz, char uplo, int n, buffer a, int lda, buffer w, buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -65,7 +65,7 @@ void THLapack_(syev)(char jobz, char uplo, int n, real *a, int lda, real *w, rea
 #endif
 }
 
-void THLapack_(geev)(char jobvl, char jobvr, int n, real *a, int lda, real *wr, real *wi, real* vl, int ldvl, real *vr, int ldvr, real *work, int lwork, int *info)
+void THLapack_(geev)(char jobvl, char jobvr, int n, buffer a, int lda, buffer wr, buffer wi, buffer vl, int ldvl, buffer vr, int ldvr, buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -78,7 +78,7 @@ void THLapack_(geev)(char jobvl, char jobvr, int n, real *a, int lda, real *wr, 
 #endif
 }
 
-void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, real *a, int lda, real *s, real *u, int ldu, real *vt, int ldvt, real *work, int lwork, int *info)
+void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, buffer a, int lda, buffer s, buffer u, int ldu, buffer vt, int ldvt, buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -92,7 +92,7 @@ void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, real *a, int lda, rea
 }
 
 /* LU decomposition */
-void THLapack_(getrf)(int m, int n, real *a, int lda, int *ipiv, int *info)
+void THLapack_(getrf)(int m, int n, buffer a, int lda, int *ipiv, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -105,7 +105,7 @@ void THLapack_(getrf)(int m, int n, real *a, int lda, int *ipiv, int *info)
 #endif
 }
 /* Matrix Inverse */
-void THLapack_(getri)(int n, real *a, int lda, int *ipiv, real *work, int lwork, int* info)
+void THLapack_(getri)(int n, buffer a, int lda, int *ipiv, buffer work, int lwork, int* info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -119,7 +119,7 @@ void THLapack_(getri)(int n, real *a, int lda, int *ipiv, real *work, int lwork,
 }
 
 /* Cholesky factorization */
-void THLapack_(potrf)(char uplo, int n, real *a, int lda, int *info)
+void THLapack_(potrf)(char uplo, int n, buffer a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -133,7 +133,7 @@ void THLapack_(potrf)(char uplo, int n, real *a, int lda, int *info)
 }
 
 /* Cholesky factorization based Matrix Inverse */
-void THLapack_(potri)(char uplo, int n, real *a, int lda, int *info)
+void THLapack_(potri)(char uplo, int n, buffer a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -147,7 +147,7 @@ void THLapack_(potri)(char uplo, int n, real *a, int lda, int *info)
 }
 
 /* Solve A*X = B with a symmetric positive definite matrix A using the Cholesky factorization */
-void THLapack_(potrs)(char uplo, int n, int nrhs, real *a, int lda, real *b, int ldb, int *info)
+void THLapack_(potrs)(char uplo, int n, int nrhs, buffer a, int lda, buffer b, int ldb, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)

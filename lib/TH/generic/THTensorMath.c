@@ -26,7 +26,7 @@ void THTensor_(maskedFill)(THTensor *tensor, THByteTensor *mask, real value)
 void THTensor_(maskedCopy)(THTensor *tensor, THByteTensor *mask, THTensor* src )
 {
   THTensor *srct = THTensor_(newContiguous)(src);
-  real *src_data = THTensor_(data)(srct);
+  buffer src_data = THTensor_(data)(srct);
   long cntr = 0;
   long nelem = THTensor_(nElement)(srct);
   TH_TENSOR_APPLY2(real, tensor, unsigned char, mask,
@@ -50,7 +50,7 @@ void THTensor_(maskedCopy)(THTensor *tensor, THByteTensor *mask, THTensor* src )
 void THTensor_(maskedSelect)(THTensor *tensor, THTensor *src, THByteTensor *mask)
 {
   long numel = THByteTensor_sumall(mask);
-  real *tensor_data;
+  buffer tensor_data;
 
   THTensor_(resize1d)(tensor,numel);
   tensor_data = THTensor_(data)(tensor);
@@ -215,8 +215,8 @@ void THTensor_(add)(THTensor *r_, THTensor *t, real value)
 {
   THTensor_(resizeAs)(r_, t);
   if (THTensor_(isContiguous)(r_) && THTensor_(isContiguous)(t) && THTensor_(nElement)(r_) == THTensor_(nElement)(t)) {
-      real *tp = THTensor_(data)(t);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -231,8 +231,8 @@ void THTensor_(mul)(THTensor *r_, THTensor *t, real value)
 {
   THTensor_(resizeAs)(r_, t);
   if (THTensor_(isContiguous)(r_) && THTensor_(isContiguous)(t) && THTensor_(nElement)(r_) == THTensor_(nElement)(t)) {
-      real *tp = THTensor_(data)(t);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -247,8 +247,8 @@ void THTensor_(div)(THTensor *r_, THTensor *t, real value)
 {
   THTensor_(resizeAs)(r_, t);
   if (THTensor_(isContiguous)(r_) && THTensor_(isContiguous)(t) && THTensor_(nElement)(r_) == THTensor_(nElement)(t)) {
-      real *tp = THTensor_(data)(t);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -266,9 +266,9 @@ void THTensor_(cadd)(THTensor *r_, THTensor *t, real value, THTensor *src)
     if(r_ == t) {
       THBlas_(axpy)(THTensor_(nElement)(t), value, THTensor_(data)(src), 1, THTensor_(data)(r_), 1);
     } else {
-      real *tp = THTensor_(data)(t);
-      real *sp = THTensor_(data)(src);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer sp = THTensor_(data)(src);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -284,9 +284,9 @@ void THTensor_(cmul)(THTensor *r_, THTensor *t, THTensor *src)
 {
   THTensor_(resizeAs)(r_, t);
   if (THTensor_(isContiguous)(r_) && THTensor_(isContiguous)(t) && THTensor_(isContiguous)(src) && THTensor_(nElement)(r_) == THTensor_(nElement)(src)) {
-      real *tp = THTensor_(data)(t);
-      real *sp = THTensor_(data)(src);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer sp = THTensor_(data)(src);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -301,9 +301,9 @@ void THTensor_(cdiv)(THTensor *r_, THTensor *t, THTensor *src)
 {
   THTensor_(resizeAs)(r_, t);
   if (THTensor_(isContiguous)(r_) && THTensor_(isContiguous)(t) && THTensor_(isContiguous)(src) && THTensor_(nElement)(r_) == THTensor_(nElement)(src)) {
-      real *tp = THTensor_(data)(t);
-      real *sp = THTensor_(data)(src);
-      real *rp = THTensor_(data)(r_);
+      buffer tp = THTensor_(data)(t);
+      buffer sp = THTensor_(data)(src);
+      buffer rp = THTensor_(data)(r_);
       long sz = THTensor_(nElement)(t);
       long i;
       #pragma omp parallel for if(sz > TH_OMP_OVERHEAD_THRESHOLD) private(i)
@@ -389,9 +389,9 @@ void THTensor_(match)(THTensor *r_, THTensor *m1, THTensor *m2, real gain)
   long N1 = m1->size[0];
   long N2 = m2->size[0];
   long dim;
-  real *m1_p;
-  real *m2_p;
-  real *r_p;
+  buffer m1_p;
+  buffer m2_p;
+  buffer r_p;
   long i;
 
   THTensor_(resize2d)(r_, N1, N2);
@@ -733,7 +733,7 @@ void THTensor_(sign)(THTensor *r_, THTensor *t)
 
 accreal THTensor_(trace)(THTensor *t)
 {
-  real *t_data = THTensor_(data)(t);
+  buffer t_data = THTensor_(data)(t);
   accreal sum = 0;
   long i = 0;
   long t_stride_0, t_stride_1, t_diag_size;
@@ -808,11 +808,11 @@ void THTensor_(diag)(THTensor *r_, THTensor *t, int k)
 
   if(THTensor_(nDimension)(t) == 1)
   {
-    real *t_data = THTensor_(data)(t);
+    buffer t_data = THTensor_(data)(t);
     long t_stride_0 = THTensor_(stride)(t, 0);
     long t_size = THTensor_(size)(t, 0);
     long sz = t_size + (k >= 0 ? k : -k);
-    real *r__data;
+    buffer r__data;
     long r__stride_0;
     long r__stride_1;
     long i;
@@ -829,11 +829,11 @@ void THTensor_(diag)(THTensor *r_, THTensor *t, int k)
   }
   else
   {
-    real *t_data = THTensor_(data)(t);
+    buffer t_data = THTensor_(data)(t);
     long t_stride_0 = THTensor_(stride)(t, 0);
     long t_stride_1 = THTensor_(stride)(t, 1);
     long sz;
-    real *r__data;
+    buffer r__data;
     long r__stride_0;
     long i;
 
@@ -853,7 +853,7 @@ void THTensor_(diag)(THTensor *r_, THTensor *t, int k)
 
 void THTensor_(eye)(THTensor *r_, long n, long m)
 {
-  real *r__data;
+  buffer r__data;
   long i, sz;
 
   THArgCheck(n > 0, 1, "invalid argument");
@@ -890,7 +890,7 @@ void THTensor_(range)(THTensor *r_, real xmin, real xmax, real step)
 
 void THTensor_(randperm)(THTensor *r_, THGenerator *_generator, long n)
 {
-  real *r__data;
+  buffer r__data;
   long r__stride_0;
   long i;
 
@@ -927,7 +927,7 @@ void THTensor_(reshape)(THTensor *r_, THTensor *t, THLongStorage *size)
     Updated Oct 24 2013: change pivot comparison to strict inequality to avoid worst-case on constant input, see Sedgewick, Algorithms in C, Addison Wesley, 1990, p. 120 - Julien
 */
 #define  MAX_LEVELS  300
-static void THTensor_(quicksortascend)(real *arr, long *idx, long elements, long stride)
+static void THTensor_(quicksortascend)(buffer arr, long *idx, long elements, long stride)
 {
   long beg[MAX_LEVELS], end[MAX_LEVELS], i=0, L, R, P, swap, pid;
   real rswap, piv;
@@ -977,7 +977,7 @@ static void THTensor_(quicksortascend)(real *arr, long *idx, long elements, long
   }
 }
 
-static void THTensor_(quicksortdescend)(real *arr, long *idx, long elements, long stride)
+static void THTensor_(quicksortdescend)(buffer arr, long *idx, long elements, long stride)
 {
   long beg[MAX_LEVELS], end[MAX_LEVELS], i=0, L, R, P, swap, pid;
   real rswap, piv;
@@ -1063,7 +1063,7 @@ void THTensor_(tril)(THTensor *r_, THTensor *t, long k)
   long t_size_0, t_size_1;
   long t_stride_0, t_stride_1;
   long r__stride_0, r__stride_1;
-  real *t_data, *r__data;
+  buffer t_data, *r__data;
   long r, c;
 
   THArgCheck(THTensor_(nDimension)(t) == 2, 1, "not a matrix");
@@ -1094,7 +1094,7 @@ void THTensor_(triu)(THTensor *r_, THTensor *t, long k)
   long t_size_0, t_size_1;
   long t_stride_0, t_stride_1;
   long r__stride_0, r__stride_1;
-  real *t_data, *r__data;
+  buffer t_data, *r__data;
   long r, c;
 
   THArgCheck(THTensor_(nDimension)(t) == 2, 1, "not a matrix");
@@ -1535,7 +1535,7 @@ void THTensor_(histc)(THTensor *hist, THTensor *tensor, long nbins, real minvalu
   real minval;
   real maxval;
   real bins;
-  real *h_data;
+  buffer h_data;
 
   THTensor_(resize1d)(hist, nbins);
   THTensor_(zero)(hist);

@@ -195,7 +195,7 @@ TH_API void THTensor_(geev)(THTensor *re_, THTensor *rv_, THTensor *a_, const ch
   int n, lda, lwork, info, ldvr;
   THTensor *work, *wi, *wr, *a;
   real wkopt;
-  real *rv_data;
+  buffer rv_data;
   long i;
 
   THArgCheck(a_->nDimension == 2, 3, "A should be 2 dimensional");
@@ -242,9 +242,9 @@ TH_API void THTensor_(geev)(THTensor *re_, THTensor *rv_, THTensor *a_, const ch
   }
 
   {
-    real *re_data = THTensor_(data)(re_);
-    real *wi_data = THTensor_(data)(wi);
-    real *wr_data = THTensor_(data)(wr);
+    buffer re_data = THTensor_(data)(re_);
+    buffer wi_data = THTensor_(data)(wi);
+    buffer wr_data = THTensor_(data)(wr);
     for (i=0; i<n; i++)
     {
       re_data[2*i] = wr_data[i];
@@ -520,7 +520,7 @@ TH_API void THTensor_(potrf)(THTensor *ra_, THTensor *a)
 
   /* Build full upper-triangular matrix */
   {
-    real *p = THTensor_(data)(ra__);
+    buffer p = THTensor_(data)(ra__);
     long i,j;
     for (i=0; i<n; i++) {
       for (j=i+1; j<n; j++) {
@@ -591,7 +591,7 @@ TH_API void THTensor_(potri)(THTensor *ra_, THTensor *a)
 
   /* Build full matrix */
   {
-    real *p = THTensor_(data)(ra__);
+    buffer p = THTensor_(data)(ra__);
     long i,j;
     for (i=0; i<n; i++) {
       for (j=i+1; j<n; j++) {

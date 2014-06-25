@@ -8,10 +8,10 @@
 
    Pb: THMapStorage is kind of a class
    THLab_()... comment je m'en sors?
-   
+
    en template, faudrait que je les instancie toutes!!! oh boy!
    Et comment je sais que c'est pour Cuda? Le type float est le meme dans les <>
-   
+
    au bout du compte, ca serait sur des pointeurs float/double... etc... = facile.
    primitives??
  */
@@ -22,7 +22,7 @@
 
 typedef struct THStorage
 {
-    real *data;
+    buffer data;
     long size;
     int refcount;
     char flag;
@@ -30,7 +30,7 @@ typedef struct THStorage
     void *allocatorContext;
 } THStorage;
 
-TH_API real* THStorage_(data)(const THStorage*);
+TH_API buffer THStorage_(data)(const THStorage*);
 TH_API long THStorage_(size)(const THStorage*);
 
 /* slow access -- checks everything */
@@ -46,13 +46,13 @@ TH_API THStorage* THStorage_(newWithSize4)(real, real, real, real);
 TH_API THStorage* THStorage_(newWithMapping)(const char *filename, long size, int shared);
 
 /* takes ownership of data */
-TH_API THStorage* THStorage_(newWithData)(real *data, long size);
+TH_API THStorage* THStorage_(newWithData)(buffer data, long size);
 
 TH_API THStorage* THStorage_(newWithAllocator)(long size,
                                                THAllocator* allocator,
                                                void *allocatorContext);
 TH_API THStorage* THStorage_(newWithDataAndAllocator)(
-    real* data, long size, THAllocator* allocator, void *allocatorContext);
+    buffer data, long size, THAllocator* allocator, void *allocatorContext);
 
 /* should not differ with API */
 TH_API void THStorage_(setFlag)(THStorage *storage, const char flag);

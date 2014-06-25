@@ -44,7 +44,7 @@ THLongStorage *THTensor_(newStrideOf)(THTensor *self)
   return stride;
 }
 
-real *THTensor_(data)(const THTensor *self)
+buffer THTensor_(data)(const THTensor *self)
 {
   if(self->storage)
     return (self->storage->data+self->storageOffset);
