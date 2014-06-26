@@ -52,7 +52,7 @@ buffer THTensor_(data)(const THTensor *self)
       return self->storage;
 #else
     return (self->storage->data+self->storageOffset);
-#end
+#endif
   else
     return NULL;
 }
