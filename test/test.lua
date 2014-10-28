@@ -1,6 +1,6 @@
 --require 'torch'
 
-local mytester 
+local mytester
 local torchtest = {}
 local msize = 100
 
@@ -26,7 +26,7 @@ function torchtest.dot()
    end
 
    local err = math.abs(res1-res2)
-   
+
    mytester:assertlt(err, precision, 'error in torch.dot')
 end
 
@@ -48,10 +48,10 @@ local genericSingleOpTest = [[
    local maxerrc = 0
    for i = 1, err:size(1) do
       if err[i] > maxerrc then
-	 maxerrc = err[i]
+         maxerrc = err[i]
       end
-   end      
-   
+   end
+
    -- non-contiguous
    local m1 = torch.randn(100,100)
    local res1 = torch.functionname(m1[{ {}, 4 }])
@@ -68,7 +68,7 @@ local genericSingleOpTest = [[
    local maxerrnc = 0
    for i = 1, err:size(1) do
       if err[i] > maxerrnc then
-	 maxerrnc = err[i]
+         maxerrnc = err[i]
       end
    end
    return maxerrc, maxerrnc
@@ -170,6 +170,51 @@ function torchtest.ceil()
    local maxerrc, maxerrnc = f()
    mytester:assertlt(maxerrc, precision, 'error in torch.functionname - contiguous')
    mytester:assertlt(maxerrnc, precision, 'error in torch.functionname - non-contiguous')
+end
+
+function torchtest.round()
+   -- [res] torch.round([res,] x)
+   -- contiguous
+   local m1 = torch.randn(100,100)
+   local res1 = torch.round(m1[{ 4,{} }])
+   local res2 = res1:clone():zero()
+   for i = 1,res1:size(1) do
+      res2[i] = math.floor(m1[4][i]+0.5)
+   end
+   local err = res1:clone():zero()
+   -- find absolute error
+   for i = 1, res1:size(1) do
+      err[i] = math.abs(res1[i] - res2[i])
+   end
+   -- find maximum element of error
+   local maxerrc = 0
+   for i = 1, err:size(1) do
+      if err[i] > maxerrc then
+         maxerrc = err[i]
+      end
+   end
+   mytester:assertlt(maxerrc, precision, 'error in torch.round - contiguous')
+
+   -- non-contiguous
+   local m1 = torch.randn(100,100)
+   local res1 = torch.round(m1[{ {}, 4 }])
+   local res2 = res1:clone():zero()
+   for i = 1,res1:size(1) do
+      res2[i] = math.floor(m1[i][4]+0.5)
+   end
+   local err = res1:clone():zero()
+   -- find absolute error
+   for i = 1, res1:size(1) do
+      err[i] = math.abs(res1[i] - res2[i])
+   end
+   -- find maximum element of error
+   local maxerrnc = 0
+   for i = 1, err:size(1) do
+      if err[i] > maxerrnc then
+         maxerrnc = err[i]
+      end
+   end
+   mytester:assertlt(maxerrnc, precision, 'error in torch.round - non-contiguous')
 end
 
 function torchtest.max()  -- torch.max([resval, resind,] x [,dim])
@@ -288,6 +333,23 @@ function torchtest.min()  -- torch.min([resval, resind,] x [,dim])
    mytester:assertlt(minerr, precision, 'error in torch.min - non-contiguous')      
 end
 
+for i, v in ipairs{{10}, {5, 5}} do
+   torchtest['allAndAny' .. i] =
+      function ()
+           local x = torch.ones(unpack(v)):byte()
+	   mytester:assert(x:all())
+	   mytester:assert(x:any())
+
+           x[3] = 0
+	   mytester:assert(not x:all())
+	   mytester:assert(x:any())
+
+	   x:zero()
+	   mytester:assert(not x:all())
+           mytester:assert(not x:any())
+       end
+end
+
 function torchtest.mv()
    local m1 = torch.randn(100,100)
    local v1 = torch.randn(100)
@@ -395,6 +457,31 @@ function torchtest.div()
    
    local err = (res1-res2):abs():max()
    
+   mytester:assertlt(err, precision, 'error in torch.div - scalar, non contiguous')
+end
+
+function torchtest.clamp()
+   local m1 = torch.rand(100):mul(5):add(-2.5)  -- uniform in [-2.5, 2.5]
+   -- just in case we're extremely lucky:
+   local min_val = -1
+   local max_val = 1
+   m1[1] = min_val
+   m2[2] = max_val
+   local res1 = m1:clone()
+
+   res1:clamp(min_val, max_val)
+
+   local res2 = m1:clone()
+   for i = 1,m1:size(1) do
+      if res2[i] > max_val then
+         res2[i] = max_val
+      elseif res2[i] < min_val then
+         res2[i] = min_val
+      end
+   end
+
+   local err = (res1-res2):abs():max()
+
    mytester:assertlt(err, precision, 'error in torch.div - scalar, non contiguous')
 end
 
@@ -1393,6 +1480,151 @@ end
 function torchtest.classNoModule()
     local x = torch.class('_myclass123')
     mytester:assert(x, 'Could not create class in module')
+end
+
+function torchtest.type()
+   local objects = {torch.DoubleTensor(), {}, nil, 2, "asdf"}
+   local types = {'torch.DoubleTensor', 'table', 'nil', 'number', 'string'}
+   for i,obj in ipairs(objects) do
+      mytester:assert(torch.type(obj) == types[i], "wrong type "..types[i])
+   end
+end
+
+function torchtest.isTypeOfInheritance()
+   do
+      local A = torch.class('A')
+      local B, parB = torch.class('B', 'A')
+      local C, parC = torch.class('C', 'A')
+   end
+   local a, b, c = A(), B(), C()
+
+   mytester:assert(torch.isTypeOf(a, 'A'), 'isTypeOf error, string spec')
+   mytester:assert(torch.isTypeOf(a, A), 'isTypeOf error, constructor')
+   mytester:assert(torch.isTypeOf(b, 'B'), 'isTypeOf error child class')
+   mytester:assert(torch.isTypeOf(b, B), 'isTypeOf error child class ctor')
+   mytester:assert(torch.isTypeOf(b, 'A'), 'isTypeOf error: inheritance')
+   mytester:assert(torch.isTypeOf(b, A), 'isTypeOf error: inheritance')
+   mytester:assert(not torch.isTypeOf(c, 'B'), 'isTypeOf error: common parent')
+   mytester:assert(not torch.isTypeOf(c, B), 'isTypeOf error: common parent')
+end
+
+
+function torchtest.isTensor()
+   local t = torch.randn(3,4)
+   mytester:assert(torch.isTensor(t), 'error in isTensor')
+   mytester:assert(torch.isTensor(t[1]), 'error in isTensor for subTensor')
+   mytester:assert(not torch.isTensor(t[1][2]), 'false positive in isTensor')
+   mytester:assert(torch.Tensor.isTensor(t), 'alias not working')
+end
+
+function torchtest.view()
+   local tensor = torch.rand(15)
+   local template = torch.rand(3,5)
+   local target = template:size():totable()
+   mytester:assertTableEq(tensor:viewAs(template):size():totable(), target, 'Error in viewAs')
+   mytester:assertTableEq(tensor:view(3,5):size():totable(), target, 'Error in view')
+   mytester:assertTableEq(tensor:view(torch.LongStorage{3,5}):size():totable(), target, 'Error in view using LongStorage')
+   mytester:assertTableEq(tensor:view(-1,5):size():totable(), target, 'Error in view using dimension -1')
+   mytester:assertTableEq(tensor:view(3,-1):size():totable(), target, 'Error in view using dimension -1')
+   local tensor_view = tensor:view(5,3)
+   tensor_view:fill(torch.rand(1)[1])
+   mytester:asserteq((tensor_view-tensor):abs():max(), 0, 'Error in view')
+
+   local target_tensor = torch.Tensor()
+   mytester:assertTableEq(target_tensor:viewAs(tensor, template):size():totable(), target, 'Error in viewAs')
+   mytester:assertTableEq(target_tensor:view(tensor, 3,5):size():totable(), target, 'Error in view')
+   mytester:assertTableEq(target_tensor:view(tensor, torch.LongStorage{3,5}):size():totable(), target, 'Error in view using LongStorage')
+   mytester:assertTableEq(target_tensor:view(tensor, -1,5):size():totable(), target, 'Error in view using dimension -1')
+   mytester:assertTableEq(target_tensor:view(tensor, 3,-1):size():totable(), target, 'Error in view using dimension -1')
+   target_tensor:fill(torch.rand(1)[1])
+   mytester:asserteq((target_tensor-tensor):abs():max(), 0, 'Error in viewAs')
+end
+
+function torchtest.expand()
+   local result = torch.Tensor()
+   local tensor = torch.rand(8,1)
+   local template = torch.rand(8,5)
+   local target = template:size():totable()
+   mytester:assertTableEq(tensor:expandAs(template):size():totable(), target, 'Error in expandAs')
+   mytester:assertTableEq(tensor:expand(8,5):size():totable(), target, 'Error in expand')
+   mytester:assertTableEq(tensor:expand(torch.LongStorage{8,5}):size():totable(), target, 'Error in expand using LongStorage')
+   result:expandAs(tensor,template)
+   mytester:assertTableEq(result:size():totable(), target, 'Error in expandAs using result')
+   result:expand(tensor,8,5)
+   mytester:assertTableEq(result:size():totable(), target, 'Error in expand using result')
+   result:expand(tensor,torch.LongStorage{8,5})
+   mytester:assertTableEq(result:size():totable(), target, 'Error in expand using result and LongStorage')
+   mytester:asserteq((result:mean(2):view(8,1)-tensor):abs():max(), 0, 'Error in expand (not equal)')
+end
+
+function torchtest.repeatTensor()
+   local result = torch.Tensor()
+   local tensor = torch.rand(8,4)
+   local size = {3,1,1}
+   local sizeStorage = torch.LongStorage(size)
+   local target = {3,8,4}
+   mytester:assertTableEq(tensor:repeatTensor(unpack(size)):size():totable(), target, 'Error in repeatTensor')
+   mytester:assertTableEq(tensor:repeatTensor(sizeStorage):size():totable(), target, 'Error in repeatTensor using LongStorage')
+   result:repeatTensor(tensor,unpack(size))
+   mytester:assertTableEq(result:size():totable(), target, 'Error in repeatTensor using result')
+   result:repeatTensor(tensor,sizeStorage)
+   mytester:assertTableEq(result:size():totable(), target, 'Error in repeatTensor using result and LongStorage')
+   mytester:asserteq((result:mean(1):view(8,4)-tensor):abs():max(), 0, 'Error in repeatTensor (not equal)')
+end
+
+function torchtest.isSameSizeAs()
+   local t1 = torch.Tensor(3, 4, 9, 10)
+   local t2 = torch.Tensor(3, 4)
+   local t3 = torch.Tensor(1, 9, 3, 3)
+   local t4 = torch.Tensor(3, 4, 9, 10)
+
+   mytester:assert(t1:isSameSizeAs(t2) == false, "wrong answer ")
+   mytester:assert(t1:isSameSizeAs(t3) == false, "wrong answer ")
+   mytester:assert(t1:isSameSizeAs(t4) == true, "wrong answer ")
+end
+
+function torchtest.split()
+   local result = {}
+   local tensor = torch.rand(7,4)
+   local splitSize = 3
+   local targetSize = {{3,4},{3,4},{1,4}}
+   local dim = 1
+   local splits = tensor:split(splitSize, dim)
+   local start = 1
+   for i, split in ipairs(splits) do
+      mytester:assertTableEq(split:size():totable(), targetSize[i], 'Size error in split '..i)
+      mytester:assertTensorEq(tensor:narrow(dim, start, targetSize[i][dim]), split, 0.00001, 'Content error in split '..i)
+      start = start + targetSize[i][dim]
+   end
+   torch.split(result, tensor, splitSize, dim)
+   local start = 1
+   for i, split in ipairs(result) do
+      mytester:assertTableEq(split:size():totable(), targetSize[i], 'Result size error in split '..i)
+      mytester:assertTensorEq(tensor:narrow(dim, start, targetSize[i][dim]), split, 0.000001, 'Result content error in split '..i)
+      start = start + targetSize[i][dim]
+   end
+end
+
+function torchtest.chunk()
+   local result = {}
+   local tensor = torch.rand(4,7)
+   local nChunk = 3
+   local targetSize = {{4,3},{4,3},{4,1}}
+   local dim = 2
+   local splits = tensor:chunk(nChunk, dim)
+   local start = 1
+   for i, split in ipairs(splits) do
+      mytester:assertTableEq(split:size():totable(), targetSize[i], 'Size error in chunk '..i)
+      mytester:assertTensorEq(tensor:narrow(dim, start, targetSize[i][dim]), split, 0.00001, 'Content error in chunk '..i)
+      start = start + targetSize[i][dim]
+   end
+   torch.split(result, tensor, nChunk, dim)
+   local start = 1
+   for i, split in ipairs(result) do
+      mytester:assertTableEq(split:size():totable(), targetSize[i], 'Result size error in chunk '..i)
+      mytester:assertTensorEq(tensor:narrow(dim, start, targetSize[i][dim]), split, 0.000001, 'Result content error in chunk '..i)
+      start = start + targetSize[i][dim]
+   end
 end
 
 function torch.test(tests)
