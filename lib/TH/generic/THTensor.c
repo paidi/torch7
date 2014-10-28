@@ -46,15 +46,21 @@ THLongStorage *THTensor_(newStrideOf)(THTensor *self)
 
 buffer THTensor_(data)(const THTensor *self)
 {
-  if(self->storage)
 #if defined(TH_REAL_IS_CL)
-      // Don't use offsets in OpenCL
-      return self->storage;
+  buffer result;
+  // TODO: Copy buffer with offset in OpenCL
+  if(self->storage) {
+    result = self->storage->data;
+  }
+  return result;
 #else
+  if(self->storage) {
     return (self->storage->data+self->storageOffset);
-#endif
-  else
+  }
+  else {
     return NULL;
+  }
+#endif
 }
 
 void THTensor_(setFlag)(THTensor *self, const char flag)
@@ -410,7 +416,7 @@ void THTensor_(transpose)(THTensor *self, THTensor *src, int dimension1, int dim
   THTensor_(set)(self, src);
 
   if(dimension1 == dimension2)
-	  return;
+      return;
 
   z = self->stride[dimension1];
   self->stride[dimension1] = self->stride[dimension2];
