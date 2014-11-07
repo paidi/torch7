@@ -368,7 +368,7 @@ const char *luaT_classrootname(const char *tname)
   return tname;
 }
 
-/* module_name must be a buffer at least as big as tname 
+/* module_name must be a real_buffer at least as big as tname 
  * return true if the class is part of a module */
 int luaT_classmodulename(const char *tname, char *module_name)
 {

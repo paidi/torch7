@@ -4,27 +4,27 @@
 
 #define real float
 #define accreal double
-#define buffer real*
+#define real_buffer real*
 #define Real Float
 #define TH_REAL_IS_FLOAT
 #line 1 TH_GENERIC_FILE
 #include TH_GENERIC_FILE
 #undef accreal
 #undef real
-#undef buffer
+#undef real_buffer
 #undef Real
 #undef TH_REAL_IS_FLOAT
 
 #define real double
 #define accreal double
-#define buffer real*
+#define real_buffer real*
 #define Real Double
 #define TH_REAL_IS_DOUBLE
 #line 1 TH_GENERIC_FILE
 #include TH_GENERIC_FILE
 #undef accreal
 #undef real
-#undef buffer
+#undef real_buffer
 #undef Real
 #undef TH_REAL_IS_DOUBLE
 

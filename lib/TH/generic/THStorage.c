@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/THStorage.c"
 #else
 
-buffer THStorage_(data)(const THStorage *self)
+real_buffer THStorage_(data)(const THStorage *self)
 {
   return self->data;
 }
@@ -118,13 +118,13 @@ void THStorage_(free)(THStorage *storage)
   }
 }
 
-THStorage* THStorage_(newWithData)(buffer data, long size)
+THStorage* THStorage_(newWithData)(real_buffer data, long size)
 {
   return THStorage_(newWithDataAndAllocator)(data, size,
                                              &THDefaultAllocator, NULL);
 }
 
-THStorage* THStorage_(newWithDataAndAllocator)(buffer data, long size,
+THStorage* THStorage_(newWithDataAndAllocator)(real_buffer data, long size,
                                                THAllocator* allocator,
                                                void* allocatorContext) {
   THStorage *storage = THAlloc(sizeof(THStorage));

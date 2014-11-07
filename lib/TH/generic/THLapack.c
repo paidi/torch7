@@ -25,7 +25,7 @@ TH_EXTERNC void dpotrs_(char *uplo, int *n, int *nrhs, double *a, int *lda, doub
 TH_EXTERNC void spotrs_(char *uplo, int *n, int *nrhs, float *a, int *lda, float *b, int *ldb, int *info);
 
 
-void THLapack_(gesv)(int n, int nrhs, buffer a, int lda, int *ipiv, buffer b, int ldb, int* info)
+void THLapack_(gesv)(int n, int nrhs, real_buffer a, int lda, int *ipiv, real_buffer b, int ldb, int* info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -39,7 +39,7 @@ void THLapack_(gesv)(int n, int nrhs, buffer a, int lda, int *ipiv, buffer b, in
   return;
 }
 
-void THLapack_(gels)(char trans, int m, int n, int nrhs, buffer a, int lda, buffer b, int ldb, buffer work, int lwork, int *info)
+void THLapack_(gels)(char trans, int m, int n, int nrhs, real_buffer a, int lda, real_buffer b, int ldb, real_buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -52,7 +52,7 @@ void THLapack_(gels)(char trans, int m, int n, int nrhs, buffer a, int lda, buff
 #endif
 }
 
-void THLapack_(syev)(char jobz, char uplo, int n, buffer a, int lda, buffer w, buffer work, int lwork, int *info)
+void THLapack_(syev)(char jobz, char uplo, int n, real_buffer a, int lda, real_buffer w, real_buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -65,7 +65,7 @@ void THLapack_(syev)(char jobz, char uplo, int n, buffer a, int lda, buffer w, b
 #endif
 }
 
-void THLapack_(geev)(char jobvl, char jobvr, int n, buffer a, int lda, buffer wr, buffer wi, buffer vl, int ldvl, buffer vr, int ldvr, buffer work, int lwork, int *info)
+void THLapack_(geev)(char jobvl, char jobvr, int n, real_buffer a, int lda, real_buffer wr, real_buffer wi, real_buffer vl, int ldvl, real_buffer vr, int ldvr, real_buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -78,7 +78,7 @@ void THLapack_(geev)(char jobvl, char jobvr, int n, buffer a, int lda, buffer wr
 #endif
 }
 
-void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, buffer a, int lda, buffer s, buffer u, int ldu, buffer vt, int ldvt, buffer work, int lwork, int *info)
+void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, real_buffer a, int lda, real_buffer s, real_buffer u, int ldu, real_buffer vt, int ldvt, real_buffer work, int lwork, int *info)
 {
 #ifdef USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -92,7 +92,7 @@ void THLapack_(gesvd)(char jobu, char jobvt, int m, int n, buffer a, int lda, bu
 }
 
 /* LU decomposition */
-void THLapack_(getrf)(int m, int n, buffer a, int lda, int *ipiv, int *info)
+void THLapack_(getrf)(int m, int n, real_buffer a, int lda, int *ipiv, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -105,7 +105,7 @@ void THLapack_(getrf)(int m, int n, buffer a, int lda, int *ipiv, int *info)
 #endif
 }
 /* Matrix Inverse */
-void THLapack_(getri)(int n, buffer a, int lda, int *ipiv, buffer work, int lwork, int* info)
+void THLapack_(getri)(int n, real_buffer a, int lda, int *ipiv, real_buffer work, int lwork, int* info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -119,7 +119,7 @@ void THLapack_(getri)(int n, buffer a, int lda, int *ipiv, buffer work, int lwor
 }
 
 /* Cholesky factorization */
-void THLapack_(potrf)(char uplo, int n, buffer a, int lda, int *info)
+void THLapack_(potrf)(char uplo, int n, real_buffer a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -133,7 +133,7 @@ void THLapack_(potrf)(char uplo, int n, buffer a, int lda, int *info)
 }
 
 /* Cholesky factorization based Matrix Inverse */
-void THLapack_(potri)(char uplo, int n, buffer a, int lda, int *info)
+void THLapack_(potri)(char uplo, int n, real_buffer a, int lda, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
@@ -147,7 +147,7 @@ void THLapack_(potri)(char uplo, int n, buffer a, int lda, int *info)
 }
 
 /* Solve A*X = B with a symmetric positive definite matrix A using the Cholesky factorization */
-void THLapack_(potrs)(char uplo, int n, int nrhs, buffer a, int lda, buffer b, int ldb, int *info)
+void THLapack_(potrs)(char uplo, int n, int nrhs, real_buffer a, int lda, real_buffer b, int ldb, int *info)
 {
 #ifdef  USE_LAPACK
 #if defined(TH_REAL_IS_DOUBLE)
