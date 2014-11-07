@@ -29,7 +29,7 @@ TH_API long THTensor_(size)(const THTensor *self, int dim);
 TH_API long THTensor_(stride)(const THTensor *self, int dim);
 TH_API THLongStorage *THTensor_(newSizeOf)(THTensor *self);
 TH_API THLongStorage *THTensor_(newStrideOf)(THTensor *self);
-TH_API buffer THTensor_(data)(const THTensor *self);
+TH_API real_buffer THTensor_(data)(const THTensor *self);
 
 TH_API void THTensor_(setFlag)(THTensor *self, const char flag);
 TH_API void THTensor_(clearFlag)(THTensor *self, const char flag);

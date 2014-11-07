@@ -2,7 +2,7 @@
 #define TH_GENERIC_FILE "generic/THStorageCopy.c"
 #else
 
-void THStorage_(rawCopy)(THStorage *storage, buffer src)
+void THStorage_(rawCopy)(THStorage *storage, real_buffer src)
 {
   long i;
   for(i = 0; i < storage->size; i++)

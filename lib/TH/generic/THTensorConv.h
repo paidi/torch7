@@ -3,34 +3,34 @@
 #else
 
 
-TH_API void THTensor_(validXCorr2Dptr)(buffer r_,
+TH_API void THTensor_(validXCorr2Dptr)(real_buffer r_,
                                     real alpha,
-                                    buffer t_, long ir, long ic,
-                                    buffer k_, long kr, long kc,
+                                    real_buffer t_, long ir, long ic,
+                                    real_buffer k_, long kr, long kc,
                                     long sr, long sc);
 
-TH_API void THTensor_(validConv2Dptr)(buffer r_,
+TH_API void THTensor_(validConv2Dptr)(real_buffer r_,
                                    real alpha,
-                                   buffer t_, long ir, long ic,
-                                   buffer k_, long kr, long kc,
+                                   real_buffer t_, long ir, long ic,
+                                   real_buffer k_, long kr, long kc,
                                    long sr, long sc);
 
-TH_API void THTensor_(fullXCorr2Dptr)(buffer r_,
+TH_API void THTensor_(fullXCorr2Dptr)(real_buffer r_,
                                    real alpha,
-                                   buffer t_, long ir, long ic,
-                                   buffer k_, long kr, long kc,
+                                   real_buffer t_, long ir, long ic,
+                                   real_buffer k_, long kr, long kc,
                                    long sr, long sc);
 
-TH_API void THTensor_(fullConv2Dptr)(buffer r_,
+TH_API void THTensor_(fullConv2Dptr)(real_buffer r_,
                                   real alpha,
-                                  buffer t_, long ir, long ic,
-                                  buffer k_, long kr, long kc,
+                                  real_buffer t_, long ir, long ic,
+                                  real_buffer k_, long kr, long kc,
                                   long sr, long sc);
 
-TH_API void THTensor_(validXCorr2DRevptr)(buffer r_,
+TH_API void THTensor_(validXCorr2DRevptr)(real_buffer r_,
                                        real alpha,
-                                       buffer t_, long ir, long ic,
-                                       buffer k_, long kr, long kc,
+                                       real_buffer t_, long ir, long ic,
+                                       real_buffer k_, long kr, long kc,
                                        long sr, long sc);
 
 TH_API void THTensor_(conv2DRevger)(THTensor *r_, real beta, real alpha, THTensor *t_, THTensor *k_, long srow, long scol);
@@ -41,34 +41,34 @@ TH_API void THTensor_(conv2Dmm)(THTensor *r_, real beta, real alpha, THTensor *t
 TH_API void THTensor_(conv2Dmul)(THTensor *r_, real beta, real alpha, THTensor *t_, THTensor *k_, long srow, long scol, const char *vf, const char *xc);
 TH_API void THTensor_(conv2Dcmul)(THTensor *r_, real beta, real alpha, THTensor *t_, THTensor *k_, long srow, long scol, const char *vf, const char *xc);
 
-TH_API void THTensor_(validXCorr3Dptr)(buffer r_,
+TH_API void THTensor_(validXCorr3Dptr)(real_buffer r_,
                                     real alpha,
-                                    buffer t_, long it, long ir, long ic,
-                                    buffer k_, long kt, long kr, long kc,
+                                    real_buffer t_, long it, long ir, long ic,
+                                    real_buffer k_, long kt, long kr, long kc,
                                     long st, long sr, long sc);
 
-TH_API void THTensor_(validConv3Dptr)(buffer r_,
+TH_API void THTensor_(validConv3Dptr)(real_buffer r_,
                                    real alpha,
-                                   buffer t_, long it, long ir, long ic,
-                                   buffer k_, long kt, long kr, long kc,
+                                   real_buffer t_, long it, long ir, long ic,
+                                   real_buffer k_, long kt, long kr, long kc,
                                    long st, long sr, long sc);
 
-TH_API void THTensor_(fullXCorr3Dptr)(buffer r_,
+TH_API void THTensor_(fullXCorr3Dptr)(real_buffer r_,
                                    real alpha,
-                                   buffer t_, long it, long ir, long ic,
-                                   buffer k_, long kt, long kr, long kc,
+                                   real_buffer t_, long it, long ir, long ic,
+                                   real_buffer k_, long kt, long kr, long kc,
                                    long st, long sr, long sc);
 
-TH_API void THTensor_(fullConv3Dptr)(buffer r_,
+TH_API void THTensor_(fullConv3Dptr)(real_buffer r_,
                                   real alpha,
-                                  buffer t_, long it, long ir, long ic,
-                                  buffer k_, long kt, long kr, long kc,
+                                  real_buffer t_, long it, long ir, long ic,
+                                  real_buffer k_, long kt, long kr, long kc,
                                   long st, long sr, long sc);
 
-TH_API void THTensor_(validXCorr3DRevptr)(buffer r_,
+TH_API void THTensor_(validXCorr3DRevptr)(real_buffer r_,
                                        real alpha, 
-                                       buffer t_, long it, long ir, long ic,
-                                       buffer k_, long kt, long kr, long kc,
+                                       real_buffer t_, long it, long ir, long ic,
+                                       real_buffer k_, long kt, long kr, long kc,
                                        long st, long sr, long sc);
 
 TH_API void THTensor_(conv3DRevger)(THTensor *r_, real beta, real alpha, THTensor *t_, THTensor *k_, long sdepth, long srow, long scol);

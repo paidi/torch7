@@ -44,11 +44,11 @@ THLongStorage *THTensor_(newStrideOf)(THTensor *self)
   return stride;
 }
 
-buffer THTensor_(data)(const THTensor *self)
+real_buffer THTensor_(data)(const THTensor *self)
 {
 #if defined(TH_REAL_IS_CL)
-  buffer result;
-  // TODO: Copy buffer with offset in OpenCL
+  real_buffer result;
+  // TODO: Copy real_buffer with offset in OpenCL
   if(self->storage) {
     result = self->storage->data;
   }
